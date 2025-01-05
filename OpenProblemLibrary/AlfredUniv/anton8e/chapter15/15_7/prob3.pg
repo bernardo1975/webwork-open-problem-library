@@ -11,6 +11,7 @@
 ## Institution(Alfred University)
 ## Author(Darwyn Cook)
 ## Level(2)
+## MO(1)
 ## TitleText1('Calculus: with Early Transcendentals')
 ## AuthorText1('8')
 ## EditionText1('8')
@@ -24,21 +25,19 @@ DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
   "PGstandard.pl",
-  "PGchoicemacros.pl",
   "unionTables.pl",
   "Alfredmacros.pl",
   "MathObjects.pl",
   "PGcourse.pl"
 );
 
+Context("Numeric");
+
 Context()->variables->are(
        x=>'Real',
        y=>'Real',
-       z=>'Real',
        r=>'Real',
-       theta=>'Real',
-       phi=>'Real',
-       rho=>'Real'
+       theta=>'Real',  
 ); 
 $showPartialCorrectAnswers = 1;
 
@@ -48,7 +47,7 @@ $b = random(3,10);
 $r = sqrt($b/$a);
 
 $upper = Formula("$b-$a*x^2-$a*y^2")->reduce;
-$ans = 2*pi*($n/(2*$n+2)*$b*$r**((2*$n+2)/$n)-$n/(4*$n+2)*$a*$r**((4*$n+2)/$n));
+$ans = Compute("2*pi*(($b*$n)/(2*$n+2)($b/$a)^(($n+1)/$n)-($a*$n)/(4*$n+2)*($b/$a)^((2*$n+1)/$n))");
 
 #######################################################
 # Prevent students from being able to double click in
@@ -56,14 +55,15 @@ $ans = 2*pi*($n/(2*$n+2)*$b*$r**((2*$n+2)/$n)-$n/(4*$n+2)*$a*$r**((4*$n+2)/$n));
 # the code for the answer blank in a pop up, not harmful
 # but disruptive.
 
+TEXT(beginproblem());
 
 Context()->texStrings;
 BEGIN_TEXT
-Integrate the function \((x^2+y^2)^{\frac{1}{$n}}\) over the region E that is bounded by the xy plane below and above by the paraboloid \(z=$upper\) using cylindrical coordinates.
+Use cylindrical coordinates to integrate the function \(\ (x^2+y^2)^{1/$n}\ \) over the bounded region E that is bounded from below by the xy plane, and bounded from above by the paraboloid \(\ z=$upper\). 
 $PAR
 
 \{ BeginTable(center=>0).
-     Row(['\(\displaystyle\int \!\! \int \!\!\int_{E} \,(x^2+y^2)^{\frac{1}{$n}}\, dV = \)' ,tableintegral(width=>10),tableintegral(width=>10),tableintegral(width=>10),ans_rule,'\(\hspace{5pt}dz drd\theta\ = \)',ans_rule(30),
+     Row(['\(\displaystyle\int \!\! \int \!\!\int_{E} \,(x^2+y^2)^{1/$n}\, dV = \)' ,tableintegral(width=>10),tableintegral(width=>10),tableintegral(width=>10),ans_rule,'\(\hspace{5pt}dz drd\theta\ = \)',ans_rule(30),
      ],separation=>2).
    EndTable();
 \}
@@ -77,7 +77,7 @@ ANS(Formula("0")->cmp);
 ANS(Formula("$r")->cmp);
 ANS(Formula("0")->cmp);
 ANS(Formula("$b-$a*r^2")->cmp);
-ANS(Formula("r^(($n+2)/$n)")->cmp);
-ANS(Compute("$ans")->cmp);
+ANS(Formula("r^(($n+2)/$n)")->cmp(limits=>[.1,2]));
+ANS($ans->cmp());
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.
